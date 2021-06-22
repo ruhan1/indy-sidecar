@@ -45,7 +45,6 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
-import static org.commonjava.util.sidecar.services.ProxyConstants.ARCHIVE_DECOMPRESS_COMPLETE;
 import static org.commonjava.util.sidecar.services.ProxyConstants.PKG_TYPE_MAVEN;
 import static org.eclipse.microprofile.openapi.annotations.enums.ParameterIn.PATH;
 
@@ -85,15 +84,6 @@ public class PreSeedResource
         {
             logger.debug( "Get proxy resource for folo request: {}", path );
             return proxyService.doGet( PKG_TYPE_MAVEN, type, name, path, request );
-        }
-        if ( !archiveService.isDecompressed() )
-        {
-            boolean success = archiveService.decompressArchive();
-            bus.publish(ARCHIVE_DECOMPRESS_COMPLETE, sidecarConfig.localRepository.orElse( DEFAULT_REPO_PATH ));
-            if ( !success )
-            {
-                return proxyService.doGet( PKG_TYPE_MAVEN, type, name, path, request );
-            }
         }
         Optional<File> download = archiveService.getLocally( path );
         if ( download.isPresent() )
