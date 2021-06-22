@@ -79,6 +79,8 @@ public class ArchiveRetrieveService
     @Inject
     SidecarConfig sidecarConfig;
 
+    private boolean decompressSuccess;
+
     public boolean isDecompressed()
     {
         return decompressedBuilds.contains( getBuildConfigId() );
@@ -123,6 +125,13 @@ public class ArchiveRetrieveService
                                                          return false;
                                                      } );
         client = builder.build();
+
+        logger.info( "Decompress archive" );
+        if ( !isDecompressed() )
+        {
+            this.decompressSuccess = decompressArchive();
+            //bus.publish( ARCHIVE_DECOMPRESS_COMPLETE, sidecarConfig.localRepository.orElse( DEFAULT_REPO_PATH ) );
+        }
     }
 
     @PreDestroy
@@ -184,7 +193,7 @@ public class ArchiveRetrieveService
 
     public boolean shouldProxy( final String path )
     {
-        return getBuildConfigId() == null || getBuildConfigId().trim().isEmpty() || path.endsWith( MAVEN_META );
+        return getBuildConfigId() == null || getBuildConfigId().trim().isEmpty() || path.endsWith( MAVEN_META ) || !decompressSuccess;
     }
 
     public String getBuildConfigId()

@@ -62,7 +62,16 @@ public class ReportService
         this.trackedContent.appendDownload(download);
     }
 
+    /**
+     * We need to send the folo report to Indy. Indy need an endpoint to accept it and call recordArtifact() for each entry.
+     * We also need somewhere to call this sendReport(). This might be when Quarkus receive the shutdown or terminate event.
+     */
+    public void sendReport()
+    {
+        // TODO
+    }
 
+/*
     @ConsumeEvent(value = ARCHIVE_DECOMPRESS_COMPLETE)
     public void readReport(String path)
     {
@@ -93,5 +102,6 @@ public class ReportService
         }
 
     }
+*/
 
 }
